@@ -97,7 +97,15 @@ menu_tambahan = [
 
 # ///////////// DIATAS BAGIAN EDIT MENU MAKANAN, MINUMAN,  MENU TAMBAHAN
 
-def neworder():
+# Membuat tabel akhir
+result = PrettyTable(['Nama Pelanggan', 'Barang', 'Total Tarif'])
+
+
+
+def neworder(nama):
+    data_makanan = {}
+    data_minuman = {}
+    data_menu_tambahan = {}
     print('\nMakanan:')
     # Membuat tabel untuk menampilkan list makanan
     table_makanan = PrettyTable(['Kode Makanan', 'Menu Makanan', 'Tarif'])
@@ -130,8 +138,38 @@ def neworder():
     minum = input('Kode Minuman: ')
     tambahan = input('Kode Menu Tambahan ( Ketik - Jika Tidak Ada ): ')
     tanya = input('\nApakah Selesai (y/n): ')
-    if tanya.lower() == 'y':
-        pass
+
+    # Pengecekan data makanan
+    for x in makanan:
+        if x['kode'] == makan:
+            data_makanan.update({'nama':x['nama'], 'harga':x['harga'].replace('Rp. ', '').split('.')[0]})
+            break
+    if len(data_makanan) == 0:
+        data_makanan.update({'nama':'-', 'harga':'0'})
+
+    # Pengecekan data kinuman
+    for x in minuman:
+        if x['kode'] == minum:
+            data_minuman.update({'nama':x['nama'], 'harga':x['harga'].replace('Rp. ', '').split('.')[0]})
+            break
+    if len(data_minuman) == 0:
+        data_minuman.update({'nama':'-', 'harga':'0'})
+
+    # Pengecekan data menu tambahan
+    for x in menu_tambahan:
+        if x['kode'] == tambahan.upper():
+            data_menu_tambahan.update({'nama':x['nama'], 'harga':x['harga'].replace('Rp. ', '').split('.')[0]})
+            break
+    if len(data_menu_tambahan) == 0:
+        data_menu_tambahan.update({'nama':'-', 'harga':'0'})
+
+    # Menghitung total harga
+    ttl_harga = f"Rp. {int(data_makanan['harga']) + int(data_minuman['harga']) + int(data_menu_tambahan['harga'])}.000"
+
+    # Menambahkan value tabel akhir
+    result.add_row([nama, data_makanan['nama']+', '+data_minuman['nama']+', '+ data_menu_tambahan['nama'], ttl_harga])
+    if tanya.lower() == 'n':
+        print(result)
     else:
         main()
 
@@ -151,7 +189,9 @@ def main():
     opsi = input('\nPilih Opsi: ')
     nama = input('Nama Pelanggan: ')
     if '1' in opsi:
-        neworder()
+        neworder(nama)
+    else:
+        main()
 
 if __name__ == '__main__':
     main()
